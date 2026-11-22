@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Transport ERP · Prototipo MVP</title>
+<style>
+:root{--bg:#f4f6f8;--sf:#fff;--tx:#1b2430;--mu:#66748a;--bd:#dde3ea;--ac:#0f766e;--ac2:#e6f4f2;--rd:#b42318;--box-sizing:border-box;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#10161d;--sf:#18212b;--tx:#e6ebf1;--mu:#93a1b3;--bd:#2a3644;--ac:#2dd4bf;--ac2:#12332f;--rd:#f97066;color-scheme:dark}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px;background:var(--sf);border-bottom:1px solid var(--bd)}
+header b{font-size:16px;color:var(--ac)}header .sp{flex:1}
+select,input,button{font:inherit;color:var(--tx);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:6px 9px}
+button{cursor:pointer}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}button.s{padding:3px 8px;font-size:12px}button.d{color:var(--rd)}
+nav{display:flex;gap:4px;overflow-x:auto;padding:8px 16px;background:var(--sf);border-bottom:1px solid var(--bd)}
+nav button{border:0;background:none;white-space:nowrap;color:var(--mu)}nav button.on{background:var(--ac2);color:var(--ac);font-weight:600}
+main{padding:16px;max-width:1150px;margin:auto}
+.k{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.c{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}.c small{color:var(--mu)}.c h3{margin:2px 0 0;font-size:20px}
+.bar{display:flex;gap:8px;align-items:center;margin:0 0 10px;flex-wrap:wrap}.bar h2{margin:0;font-size:17px;flex:1}
+.w{overflow-x:auto;background:var(--sf);border:1px solid var(--bd);border-radius:12px}table{border-collapse:collapse;width:100%}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);font-weight:600;font-size:12px}tr:last-child td{border:0}
+.t{display:inline-block;padding:1px 8px;border-radius:99px;background:var(--ac2);color:var(--ac);font-size:12px}.t.r{background:#fee4e2;color:var(--rd)}
+.m{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.m>form,.m>div{background:var(--sf);border-radius:14px;padding:18px;width:min(460px,100%);max-height:90vh;overflow:auto}
+label{display:block;margin:8px 0;font-size:12px;color:var(--mu)}label input,label select{width:100%;margin-top:2px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.g{grid-template-columns:1fr}}
+.rd{color:var(--rd)}.mu{color:var(--mu)}
+</style></head><body>
+<header><b>🚛 Transport ERP</b><span class="mu">MVP</span><span class="sp"></span>
+<select id="ut" onchange="swT(this.value)"></select><select id="uu" onchange="swU(this.value)"></select></header>
+<nav id="nav"></nav><main id="mn"></main><div id="md"></div>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,8),$$=n=>'$'+Math.round(n||0).toLocaleString('es-CO'),NOW='2026-11';
+const ROLES={admin:['*'],operador:['partners','fleet','ops'],contador:['billing','finance','settle','report']};
+const NAV=[['dash','Inicio'],['partners','Terceros'],['fleet','Flota'],['ops','Operaciones'],['billing','Facturación'],['finance','Finanzas'],['settle','Liquidaciones'],['report','Reportes'],['admin','Empresa']];
+let S;try{S=JSON.parse(localStorage.getItem('terp'))}catch(e){}
+function seed(){const e=()=>({partners:[],vehicles:[],drivers:[],maint:[],services:[],invoices:[],moves:[],settles:[],audit:[],seq:{}});
+const a=e();a.partners=[{id:'p1',name:'Exportadora Caribe SAS',nit:'900.123.456',type:'cliente'},{id:'p2',name:'Navieras del Sur',nit:'800.555.111',type:'cliente'},{id:'p3',name:'Estación Terpel Ruta',nit:'890.222.333',type:'proveedor'}];
+a.drivers=[{id:'d1',name:'Carlos Pérez',doc:'73.111.222',phone:'3001112233'},{id:'d2',name:'Luis Gómez',doc:'72.333.444',phone:'3015556677'}];
+a.vehicles=[{id:'v1',plate:'TRK-101',type:'Tractomula',brand:'Kenworth',cap:34,driverId:'d1',status:'Activo',agree:[{name:'Empresa',pct:50},{name:'Socio A',pct:50}]},{id:'v2',plate:'TRK-202',type:'Tractomula',brand:'Volvo',cap:32,driverId:'d2',status:'Activo',agree:[{name:'Empresa',pct:100}]}];
+a.services=[{id:'s1',date:NOW+'-03',vehicleId:'v1',driverId:'d1',clientId:'p1',mov:'EXPO',origin:'Cartagena',dest:'Barranquilla',manifest:'MC-0001',value:2800000,status:'Completado'},{id:'s2',date:NOW+'-09',vehicleId:'v1',driverId:'d1',clientId:'p2',mov:'IMPO',origin:'Barranquilla',dest:'Cartagena',manifest:'MC-0002',value:3100000,status:'Completado'},{id:'s3',date:NOW+'-12',vehicleId:'v2',driverId:'d2',clientId:'p1',mov:'TRAS',origin:'Cartagena',dest:'Medellín',manifest:'MC-0003',value:6400000,status:'Completado'},{id:'s4',date:NOW+'-18',vehicleId:'v2',driverId:'d2',clientId:'p2',mov:'VACIO',origin:'Medellín',dest:'Cartagena',manifest:'MC-0004',value:0,status:'En curso'}];
+a.moves=[{id:'m1',date:NOW+'-05',type:'gasto',cat:'directo',vehicleId:'v1',driverId:'d1',amount:650000,desc:'Combustible'},{id:'m2',date:NOW+'-13',type:'gasto',cat:'directo',vehicleId:'v2',driverId:'d2',amount:1400000,desc:'Combustible y peajes'},{id:'m3',date:NOW+'-10',type:'gasto',cat:'general',vehicleId:'',amount:900000,desc:'Arriendo oficina'},{id:'m4',date:NOW+'-02',type:'anticipo',cat:'directo',vehicleId:'v1',driverId:'d1',amount:800000,desc:'Anticipo viaje MC-0001'}];
+const b=e();b.partners=[{id:'q1',name:'Cliente Empresa B',nit:'901.000.001',type:'cliente'}];
+const c=e(),d=e();
+return{users:[{id:'u1',name:'Ana (Admin)'},{id:'u2',name:'Beto (Operador)'},{id:'u3',name:'Carla (Contadora)'}],
+tenants:[{id:'t1',name:'Transportes Andina',seats:3},{id:'t2',name:'Logística Bahía',seats:5},{id:'t3',name:'Carga Norte',seats:5},{id:'t4',name:'Ruta Sur',seats:5}],
+mem:[{u:'u1',t:'t1',role:'admin'},{u:'u2',t:'t1',role:'operador'},{u:'u3',t:'t1',role:'contador'},{u:'u1',t:'t2',role:'admin'},{u:'u3',t:'t2',role:'contador'},{u:'u1',t:'t3',role:'admin'},{u:'u1',t:'t4',role:'admin'}],
+db:{t1:a,t2:b,t3:c,t4:d},ses:{u:'u1',t:'t1'},tab:'dash',per:NOW}}
+if(!S||!S.db)S=seed();
+const save=()=>{try{localStorage.setItem('terp',JSON.stringify(S))}catch(e){}};
+const D=()=>S.db[S.ses.t],M=()=>S.mem.find(m=>m.u==S.ses.u&&m.t==S.ses.t),U=()=>S.users.find(u=>u.id==S.ses.u);
+const can=m=>{const p=ROLES[M()?.role]||[];return p.includes('*')||p.includes(m)};
+const nm=(l,id,k='name')=>(D()[l].find(x=>x.id==id)||{})[k]||'—';
+const log=a=>D().audit.unshift({ts:new Date().toLocaleString('es-CO'),u:U().name,a});
+const num=(k,p)=>{const q=D().seq;q[k]=(q[k]||0)+1;return p+'-'+String(q[k]).padStart(4,'0')};
+const closed=(v,date)=>v&&D().settles.some(s=>s.vehicleId==v&&s.period==date.slice(0,7)&&!s.rev);
+function guard(v,date){if(closed(v,date)){alert('Período cerrado para este vehículo ('+date.slice(0,7)+'). Reverse la liquidación con justificación para modificar.');return true}}
+function head(){$('#ut').innerHTML=S.mem.filter(m=>m.u==S.ses.u).map(m=>`<option value="${m.t}" ${m.t==S.ses.t?'selected':''}>${S.tenants.find(t=>t.id==m.t).name}</option>`).join('');
+$('#uu').innerHTML=S.users.map(u=>`<option value="${u.id}" ${u.id==S.ses.u?'selected':''}>${u.name}</option>`).join('');
+$('#nav').innerHTML=NAV.filter(n=>n[0]=='dash'||can(n[0])||(n[0]=='admin'&&M()?.role=='admin')).map(n=>`<button class="${S.tab==n[0]?'on':''}" onclick="S.tab='${n[0]}';go()">${n[1]}</button>`).join('')}
+function swU(u){S.ses.u=u;if(!M())S.ses.t=S.mem.find(m=>m.u==u).t;S.tab='dash';go()}
+function swT(t){S.ses.t=t;S.tab='dash';go()}
+function go(){save();head();const v=VIEWS[S.tab];$('#mn').innerHTML=(S.tab=='dash'||can(S.tab)||S.tab=='admin'&&M()?.role=='admin')?v():'<p class="rd">Sin permiso para este módulo.</p>'}
+const tbl=(cols,rows)=>`<div class="w"><table><tr>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr>${rows.map(r=>`<tr>${cols.map(c=>`<td>${c[1](r)}</td>`).join('')}</tr>`).join('')||'<tr><td class="mu">Sin registros</td></tr>'}</table></div>`;
+const bar=(t,btn)=>`<div class="bar"><h2>${t}</h2>${btn||''}</div>`;
+const opt=(l,k='name')=>D()[l].map(x=>[x.id,x[k]]);
+function form(title,f,ok,init={}){$('#md').innerHTML=`<div class="m"><form onsubmit="event.preventDefault();_ok()"><h3>${title}</h3>${f.map(x=>`<label>${x.l}${x.o?`<select name="${x.k}">${x.o.map(o=>`<option value="${o[0]}" ${init[x.k]==o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>`:`<input name="${x.k}" type="${x.t||'text'}" value="${init[x.k]??x.v??''}" ${x.r===false?'':'required'} ${x.t=='number'?'step="any"':''}>`}</label>`).join('')}<div class="bar"><span style="flex:1"></span><button type="button" onclick="$('#md').innerHTML=''">Cancelar</button><button class="p">Guardar</button></div></form></div>`;
+window._ok=()=>{const fd=Object.fromEntries(new FormData($('#md form')));f.forEach(x=>{if(x.t=='number')fd[x.k]=+fd[x.k]});if(ok(fd)===false)return;$('#md').innerHTML='';go()}}
+const del=(l,id)=>{if(confirm('¿Eliminar registro?')){D()[l]=D()[l].filter(x=>x.id!=id);log('Eliminó '+l);go()}};
+const bal=i=>i.amount-i.paid;
+function calc(v,per){const d=D(),sv=d.services.filter(s=>s.status=='Completado'&&s.date.startsWith(per));
+const inc=sv.filter(s=>s.vehicleId==v).reduce((a,s)=>a+s.value,0),tot=sv.reduce((a,s)=>a+s.value,0);
+const dir=d.moves.filter(m=>m.type=='gasto'&&m.cat=='directo'&&m.vehicleId==v&&m.date.startsWith(per)).reduce((a,m)=>a+m.amount,0);
+const gen=d.moves.filter(m=>m.type=='gasto'&&m.cat=='general'&&m.date.startsWith(per)).reduce((a,m)=>a+m.amount,0);
+const act=d.vehicles.filter(x=>x.status=='Activo').length||1,alloc=tot?gen*inc/tot:gen/act;
+return{inc,dir,gen:alloc,profit:inc-dir-alloc}}
+const VIEWS={
+dash(){const d=D(),per=S.per,veh=d.vehicles.map(v=>calc(v.id,per).profit).reduce((a,b)=>a+b,0),
+gen=d.moves.filter(m=>m.type=='gasto'&&m.cat=='general'&&m.date.startsWith(per)).reduce((a,m)=>a+m.amount,0);
+const cxc=d.invoices.filter(i=>i.kind=='emitida').reduce((a,i)=>a+bal(i),0),cxp=d.invoices.filter(i=>i.kind=='recibida').reduce((a,i)=>a+bal(i),0);
+const k=(a,b)=>`<div class="c"><small>${a}</small><h3>${b}</h3></div>`;
+return bar('Resumen '+per+' · '+S.tenants.find(t=>t.id==S.ses.t).name)+`<div class="k">${k('Servicios del mes',d.services.filter(s=>s.date.startsWith(per)).length)}${k('Facturado',$$(d.invoices.filter(i=>i.kind=='emitida').reduce((a,i)=>a+i.amount,0)))}${k('Cuentas por cobrar',$$(cxc))}${k('Cuentas por pagar',$$(cxp))}${k('Utilidad consolidada',$$(veh))}${k('Vehículos activos',d.vehicles.filter(v=>v.status=='Activo').length)}</div><p class="mu">Rentabilidad individual por vehículo y consolidada tras gastos generales. Cambie de empresa/usuario arriba para ver aislamiento y permisos.</p>`},
+partners(){const d=D();return bar('Terceros (clientes y proveedores)','<button class="p" onclick="pf()">+ Nuevo</button>')+tbl([['Nombre',r=>r.name],['NIT',r=>r.nit],['Rol',r=>`<span class="t">${r.type}</span>`],['',r=>`<button class="s" onclick="pf('${r.id}')">Editar</button> <button class="s d" onclick="del('partners','${r.id}')">✕</button>`]],d.partners)},
+fleet(){const d=D();return bar('Vehículos','<button class="p" onclick="vf()">+ Vehículo</button><button onclick="drf()">+ Conductor</button><button onclick="mf()">+ Mantenimiento</button>')+
+tbl([['Placa',r=>r.plate],['Tipo',r=>r.type],['Marca',r=>r.brand],['Cap. t',r=>r.cap],['Conductor',r=>nm('drivers',r.driverId)],['Estado',r=>`<span class="t ${r.status!='Activo'?'r':''}">${r.status}</span>`],['Acuerdo utilidades',r=>(r.agree||[]).map(a=>a.name+' '+a.pct+'%').join(' / ')],['',r=>`<button class="s" onclick="vf('${r.id}')">Editar</button> <button class="s d" onclick="del('vehicles','${r.id}')">✕</button>`]],d.vehicles)+
+bar('Conductores')+tbl([['Nombre',r=>r.name],['Documento',r=>r.doc],['Teléfono',r=>r.phone],['',r=>`<button class="s d" onclick="del('drivers','${r.id}')">✕</button>`]],d.drivers)+
+bar('Historial de mantenimiento')+tbl([['Fecha',r=>r.date],['Vehículo',r=>nm('vehicles',r.vehicleId,'plate')],['Descripción',r=>r.desc],['Costo',r=>$$(r.cost)]],d.maint)},
+ops(){const d=D();return bar('Servicios de transporte y manifiestos','<button class="p" onclick="sf()">+ Servicio</button>')+
+tbl([['Fecha',r=>r.date],['Manifiesto',r=>r.manifest],['Mov.',r=>`<span class="t">${r.mov}</span>`],['Ruta',r=>r.origin+' → '+r.dest],['Vehículo',r=>nm('vehicles',r.vehicleId,'plate')],['Conductor',r=>nm('drivers',r.driverId)],['Cliente',r=>nm('partners',r.clientId)],['Valor',r=>$$(r.value)],['Estado',r=>`<select onchange="ss('${r.id}',this.value)">${['Abierto','En curso','Completado','Anulado'].map(e=>`<option ${e==r.status?'selected':''}>${e}</option>`).join('')}</select>`],['Factura',r=>r.invoiceId?nm('invoices',r.invoiceId,'number'):'—']],[...d.services].sort((a,b)=>b.date.localeCompare(a.date)))},
+billing(){const d=D();return bar('Facturas','<button class="p" onclick="invE()">+ Emitir (desde servicios)</button><button onclick="invR()">+ Registrar recibida</button>')+
+tbl([['Número',r=>r.number],['Tipo',r=>`<span class="t ${r.kind=='recibida'?'r':''}">${r.kind}</span>`],['Tercero',r=>nm('partners',r.partnerId)],['Fecha',r=>r.date],['Vence',r=>r.due],['Total',r=>$$(r.amount)],['Saldo',r=>$$(bal(r))],['Adjunto',r=>r.file||'—'],['',r=>`<button class="s" onclick="dl('${r.id}')">Descargar</button> ${bal(r)>0?`<button class="s p" onclick="payF('${r.id}')">${r.kind=='emitida'?'Recaudar':'Pagar'}</button>`:'<span class="t">Pagada</span>'}`]],d.invoices)},
+finance(){const d=D(),cxc=d.invoices.filter(i=>i.kind=='emitida'&&bal(i)>0),cxp=d.invoices.filter(i=>i.kind=='recibida'&&bal(i)>0);
+const dc=[['Factura',r=>r.number],['Tercero',r=>nm('partners',r.partnerId)],['Vence',r=>r.due],['Saldo',r=>$$(bal(r))]];
+return bar('Movimientos financieros','<button class="p" onclick="mvf()">+ Movimiento</button>')+tbl([['Fecha',r=>r.date],['Tipo',r=>`<span class="t">${r.type}</span>`],['Clase',r=>r.type=='gasto'?r.cat:'—'],['Vehículo',r=>nm('vehicles',r.vehicleId,'plate')],['Conductor',r=>nm('drivers',r.driverId)],['Detalle',r=>r.desc],['Valor',r=>$$(r.amount)],['',r=>r.auto?'auto':`<button class="s d" onclick="mvd('${r.id}')">✕</button>`]],[...d.moves].sort((a,b)=>b.date.localeCompare(a.date)))+
+`<div class="g"><div>${bar('Cuentas por cobrar')}${tbl(dc,cxc)}</div><div>${bar('Cuentas por pagar')}${tbl(dc,cxp)}</div></div>`},
+settle(){const d=D(),per=S.per,mi=`<input type="month" value="${per}" onchange="S.per=this.value;go()">`;
+const rows=d.vehicles.map(v=>{const s=d.settles.find(x=>x.vehicleId==v.id&&x.period==per&&!x.rev);return{v,s,c:s||calc(v.id,per)}});
+const drv=d.drivers.map(x=>{const an=d.moves.filter(m=>m.type=='anticipo'&&m.driverId==x.id&&m.date.startsWith(per)).reduce((a,m)=>a+m.amount,0),ga=d.moves.filter(m=>m.type=='gasto'&&m.driverId==x.id&&m.date.startsWith(per)).reduce((a,m)=>a+m.amount,0);return{x,an,ga}});
+return bar('Liquidación mensual por vehículo',mi)+tbl([['Vehículo',r=>r.v.plate],['Ingresos',r=>$$(r.c.inc)],['Gastos directos',r=>$$(r.c.dir)],['Gastos generales asig.',r=>$$(r.c.gen)],['Utilidad',r=>`<b class="${r.c.profit<0?'rd':''}">${$$(r.c.profit)}</b>`],['Distribución',r=>(r.s?r.s.dist:r.v.agree||[]).map(a=>a.name+' '+(a.amount!=null?$$(a.amount):a.pct+'%')).join(' · ')],['Estado',r=>r.s?'<span class="t">Cerrada</span>':'<span class="t r">Borrador</span>'],['',r=>r.s?`<button class="s d" onclick="rev('${r.s.id}')">Reversar</button>`:`<button class="s p" onclick="close_('${r.v.id}')">Cerrar período</button>`]],rows)+
+bar('Liquidación de conductores (anticipos vs gastos justificados)')+tbl([['Conductor',r=>r.x.name],['Anticipos',r=>$$(r.an)],['Gastos justificados',r=>$$(r.ga)],['Saldo a favor empresa',r=>`<b class="${r.an-r.ga<0?'rd':''}">${$$(r.an-r.ga)}</b>`]],drv)},
+report(){const d=D(),per=S.per,cl={};d.services.filter(s=>s.status=='Completado'&&s.date.startsWith(per)).forEach(s=>{cl[s.clientId]=(cl[s.clientId]||0)+s.value});
+return bar('Reportes · '+per,`<input type="month" value="${per}" onchange="S.per=this.value;go()"><button onclick="csv()">Exportar CSV</button>`)+bar('Rentabilidad por vehículo')+tbl([['Vehículo',r=>r.plate],['Ingresos',r=>$$(calc(r.id,per).inc)],['Directos',r=>$$(calc(r.id,per).dir)],['Generales',r=>$$(calc(r.id,per).gen)],['Utilidad',r=>$$(calc(r.id,per).profit)]],d.vehicles)+
+bar('Ingresos por cliente')+tbl([['Cliente',r=>nm('partners',r[0])],['Ingresos',r=>$$(r[1])]],Object.entries(cl))+
+bar('Cartera vencida')+tbl([['Factura',r=>r.number],['Tipo',r=>r.kind],['Vence',r=>r.due],['Saldo',r=>$$(bal(r))]],d.invoices.filter(i=>bal(i)>0&&i.due<new Date().toISOString().slice(0,10)))},
+admin(){const t=S.tenants.find(x=>x.id==S.ses.t),ms=S.mem.filter(m=>m.t==t.id);
+return bar('Empresa, usuarios y cupos',`<span class="t">Cupos ${ms.length}/${t.seats}</span><button class="p" onclick="uf()">+ Membresía</button>`)+tbl([['Usuario',r=>S.users.find(u=>u.id==r.u).name],['Rol',r=>`<span class="t">${r.role}</span>`],['Permisos',r=>ROLES[r.role].join(', ')],['',r=>`<button class="s d" onclick="um('${r.u}')">Quitar</button>`]],ms)+bar('Auditoría')+tbl([['Fecha',r=>r.ts],['Usuario',r=>r.u],['Acción',r=>r.a]],D().audit.slice(0,25))}};
+/* acciones */
+function pf(id){const x=D().partners.find(p=>p.id==id)||{};form(id?'Editar tercero':'Nuevo tercero',[{k:'name',l:'Nombre'},{k:'nit',l:'NIT'},{k:'type',l:'Rol',o:[['cliente','Cliente'],['proveedor','Proveedor'],['ambos','Ambos']]}],f=>{if(D().partners.some(p=>p.nit==f.nit&&p.id!=id)){alert('NIT duplicado en esta empresa');return false}
+id?Object.assign(x,f):D().partners.push({id:uid(),...f});log('Guardó tercero '+f.name)},x)}
+function vf(id){const x=D().vehicles.find(p=>p.id==id)||{};const ag=(x.agree||[{name:'Empresa',pct:100}]);form(id?'Editar vehículo':'Nuevo vehículo',[{k:'plate',l:'Placa'},{k:'type',l:'Tipo'},{k:'brand',l:'Marca'},{k:'cap',l:'Capacidad (t)',t:'number'},{k:'driverId',l:'Conductor',o:[['','—'],...opt('drivers')]},{k:'status',l:'Estado',o:[['Activo','Activo'],['Mantenimiento','Mantenimiento'],['Inactivo','Inactivo']]},{k:'ag',l:'Acuerdo utilidades (ej: Empresa:50,Socio A:50)',v:ag.map(a=>a.name+':'+a.pct).join(',')}],f=>{
+const agree=f.ag.split(',').map(s=>{const[n,p]=s.split(':');return{name:n.trim(),pct:+p}});if(agree.reduce((a,b)=>a+(b.pct||0),0)!=100){alert('El acuerdo debe sumar 100%');return false}
+if(D().vehicles.some(p=>p.plate.toUpperCase()==f.plate.toUpperCase()&&p.id!=id)){alert('Placa duplicada');return false}delete f.ag;f.agree=agree;f.plate=f.plate.toUpperCase();id?Object.assign(x,f):D().vehicles.push({id:uid(),...f});log('Guardó vehículo '+f.plate)},x)}
+function drf(){form('Nuevo conductor',[{k:'name',l:'Nombre'},{k:'doc',l:'Documento'},{k:'phone',l:'Teléfono'}],f=>{D().drivers.push({id:uid(),...f});log('Creó conductor '+f.name)})}
+function mf(){form('Registrar mantenimiento',[{k:'vehicleId',l:'Vehículo',o:opt('vehicles','plate')},{k:'date',l:'Fecha',t:'date',v:NOW+'-15'},{k:'desc',l:'Descripción'},{k:'cost',l:'Costo',t:'number'}],f=>{if(guard(f.vehicleId,f.date))return false;D().maint.push({id:uid(),...f});D().moves.push({id:uid(),date:f.date,type:'gasto',cat:'directo',vehicleId:f.vehicleId,amount:f.cost,desc:'Mantenimiento: '+f.desc,auto:1});log('Mantenimiento '+f.desc)})}
+function sf(){const d=D();form('Nuevo servicio',[{k:'date',l:'Fecha',t:'date',v:NOW+'-20'},{k:'vehicleId',l:'Vehículo',o:opt('vehicles','plate')},{k:'driverId',l:'Conductor',o:opt('drivers')},{k:'clientId',l:'Cliente',o:d.partners.filter(p=>p.type!='proveedor').map(p=>[p.id,p.name])},{k:'mov',l:'Movimiento',o:['TRAS','EXPO','IMPO','VACIO'].map(x=>[x,x])},{k:'origin',l:'Origen'},{k:'dest',l:'Destino'},{k:'manifest',l:'Manifiesto'},{k:'value',l:'Valor flete',t:'number'}],f=>{if(!d.vehicles.length||!d.drivers.length){alert('Cree vehículos y conductores antes');return false}if(guard(f.vehicleId,f.date))return false;d.services.push({id:uid(),...f,status:'Abierto'});log('Servicio '+f.manifest)})}
+function ss(id,v){const s=D().services.find(x=>x.id==id);if(guard(s.vehicleId,s.date)){go();return}s.status=v;log('Servicio '+s.manifest+' → '+v);go()}
+function invE(){const d=D(),av=d.services.filter(s=>s.status=='Completado'&&!s.invoiceId);if(!av.length){alert('No hay servicios completados sin facturar');return}
+form('Emitir factura',[{k:'sid',l:'Servicio a facturar',o:av.map(s=>[s.id,s.manifest+' · '+nm('partners',s.clientId)+' · '+$$(s.value)])},{k:'due',l:'Vence',t:'date',v:'2026-12-20'}],f=>{const s=d.services.find(x=>x.id==f.sid),i={id:uid(),kind:'emitida',number:num('FV','FV'),partnerId:s.clientId,date:new Date().toISOString().slice(0,10),due:f.due,amount:s.value,paid:0,sids:[s.id]};d.invoices.push(i);s.invoiceId=i.id;log('Emitió '+i.number)})}
+function invR(){form('Factura recibida',[{k:'partnerId',l:'Proveedor',o:D().partners.filter(p=>p.type!='cliente').map(p=>[p.id,p.name])},{k:'number',l:'N° proveedor'},{k:'due',l:'Vence',t:'date'},{k:'amount',l:'Total',t:'number'},{k:'file',l:'Adjunto (nombre de archivo)',r:false}],f=>{D().invoices.push({id:uid(),kind:'recibida',date:new Date().toISOString().slice(0,10),paid:0,...f});log('Registró factura recibida '+f.number)})}
+function payF(id){const i=D().invoices.find(x=>x.id==id),e=i.kind=='emitida';form((e?'Recaudo ':'Pago ')+i.number,[{k:'amount',l:'Valor (saldo '+$$(bal(i))+')',t:'number',v:bal(i)}],f=>{if(f.amount<=0||f.amount>bal(i)){alert('Valor inválido');return false}i.paid+=f.amount;D().moves.push({id:uid(),date:new Date().toISOString().slice(0,10),type:e?'recaudo':'pago',cat:'directo',vehicleId:'',invoiceId:id,amount:f.amount,desc:i.number,auto:1});log((e?'Recaudo ':'Pago ')+i.number)})}
+function dl(id){const i=D().invoices.find(x=>x.id==id),t=S.tenants.find(x=>x.id==S.ses.t);const h=`<html><meta charset=utf-8><body style="font-family:sans-serif"><h2>${t.name}</h2><h3>Factura ${i.kind} ${i.number}</h3><p>Tercero: ${nm('partners',i.partnerId)}<br>Fecha: ${i.date} · Vence: ${i.due}</p><h3>Total: ${$$(i.amount)}</h3><p>Saldo: ${$$(bal(i))}</p><small>Documento interno, sin validez DIAN.</small></body></html>`;
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=i.number+'.html';a.click()}
+function mvf(){const d=D();form('Nuevo movimiento',[{k:'type',l:'Tipo',o:[['ingreso','Ingreso'],['gasto','Gasto'],['anticipo','Anticipo a conductor']]},{k:'cat',l:'Clase de gasto',o:[['directo','Directo (vehículo)'],['general','General (empresa)']]},{k:'date',l:'Fecha',t:'date',v:NOW+'-20'},{k:'vehicleId',l:'Vehículo',o:[['','—'],...opt('vehicles','plate')]},{k:'driverId',l:'Conductor',o:[['','—'],...opt('drivers')]},{k:'desc',l:'Detalle'},{k:'amount',l:'Valor',t:'number'}],f=>{
+if(f.type=='gasto'&&f.cat=='directo'&&!f.vehicleId){alert('Un gasto directo requiere vehículo');return false}if(f.type=='anticipo'&&!f.driverId){alert('Un anticipo requiere conductor');return false}if(f.amount<=0){alert('Valor inválido');return false}if(guard(f.vehicleId,f.date))return false;d.moves.push({id:uid(),...f});log('Movimiento '+f.type+' '+$$(f.amount))})}
+function mvd(id){const m=D().moves.find(x=>x.id==id);if(guard(m.vehicleId,m.date))return;del('moves',id)}
+function close_(v){const per=S.per,c=calc(v,per),veh=D().vehicles.find(x=>x.id==v);if(!confirm('¿Cerrar '+veh.plate+' '+per+'? Se bloquearán modificaciones.'))return;
+D().settles.push({id:uid(),vehicleId:v,period:per,...c,dist:(veh.agree||[]).map(a=>({name:a.name,pct:a.pct,amount:c.profit>0?c.profit*a.pct/100:0})),closedBy:U().name});log('Cerró liquidación '+veh.plate+' '+per);go()}
+function rev(id){const r=prompt('Justificación de la reversión (obligatoria):');if(!r)return;const s=D().settles.find(x=>x.id==id);s.rev=true;s.reason=r;log('Reversó liquidación '+s.period+': '+r);go()}
+function uf(){const t=S.tenants.find(x=>x.id==S.ses.t);form('Agregar membresía',[{k:'u',l:'Usuario',o:S.users.map(u=>[u.id,u.name])},{k:'role',l:'Rol',o:Object.keys(ROLES).map(r=>[r,r])}],f=>{if(S.mem.some(m=>m.u==f.u&&m.t==t.id)){alert('Ya es miembro');return false}if(S.mem.filter(m=>m.t==t.id).length>=t.seats){alert('Cupos agotados');return false}S.mem.push({u:f.u,t:t.id,role:f.role});log('Membresía '+f.role)})}
+function um(u){if(u==S.ses.u){alert('No puede quitarse a sí mismo');return}S.mem=S.mem.filter(m=>!(m.u==u&&m.t==S.ses.t));go()}
+function csv(){const per=S.per,r=[['Vehiculo','Ingresos','Directos','Generales','Utilidad'],...D().vehicles.map(v=>{const c=calc(v.id,per);return[v.plate,c.inc,c.dir,Math.round(c.gen),Math.round(c.profit)]})];
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([r.map(x=>x.join(',')).join('\n')],{type:'text/csv'}));a.download='rentabilidad-'+per+'.csv';a.click()}
+go();
+</script></body></html>
