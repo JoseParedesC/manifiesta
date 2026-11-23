@@ -81,14 +81,23 @@ td[data-l=""]::before,td:not([data-l])::before{content:none}
 tbody tr td[data-l=""]{justify-content:flex-end;margin-top:4px;padding-top:9px;border-top:1px solid rgb(var(--bd))}
 td:not([data-l]){justify-content:center}.act{flex-wrap:wrap;justify-content:flex-end}.pg{justify-content:space-between}
 }
+.man{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:start}
+.toc{position:sticky;top:84px;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 110px);overflow:auto}
+.toc button{border:0;background:none;text-align:left;color:rgb(var(--mu));padding:6px 10px;border-radius:9px}.toc button:hover{background:rgb(var(--s2));color:rgb(var(--tx))}
+.sec{background:rgb(var(--sf));border:1px solid rgb(var(--bd));border-radius:16px;box-shadow:var(--sh);padding:18px 20px;margin-bottom:14px;scroll-margin-top:84px}
+.sec h2{margin:0 0 8px;font-size:18px}.sec p,.sec li{max-width:78ch}.sec ol,.sec ul{padding-left:22px;margin:8px 0}.sec li{margin:3px 0}
+.sec code{background:rgb(var(--s2));border:1px solid rgb(var(--bd));border-radius:6px;padding:0 5px;font-size:12.5px}
+.hb{margin:10px 0;padding:10px 14px;border-radius:12px;border-left:4px solid rgb(var(--ac));background:rgb(var(--ac)/.1)}.hb.warn{border-color:rgb(var(--rd));background:rgb(var(--rd)/.1)}
+.sec .w{margin:10px 0;box-shadow:none}.sec td,.sec th{white-space:normal;text-align:left}
+@media(max-width:860px){.man{display:block}.toc{position:static;flex-direction:row;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;max-height:none}.toc button{white-space:nowrap;border:1px solid rgb(var(--bd));background:rgb(var(--sf))}.sec{scroll-margin-top:130px;padding:14px}}
 @media(hover:none){.ni:hover,.k .c:hover,.qt:hover{transform:none}tbody tr:hover{background:none}}
 @keyframes sheet{from{transform:translateY(100%)}}
 .qt{display:flex;gap:8px;align-items:center;margin:0 4px;padding:9px 12px;border-radius:10px;background:rgb(var(--ac)/.12);color:rgb(var(--ac));font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .2s,background .2s}.qt:hover{background:rgb(var(--ac)/.22);transform:translateX(2px)}
 .m>div.q{width:min(760px,100%)}.q h4{margin:16px 0 4px}.q p{margin:4px 0}.q .w{box-shadow:none}
 @media(prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
 </style></head><body>
-<div class="app"><aside><div class="brand">🚛<div><b>Manifiesta</b><small>Prototipo MVP</small></div></div><nav id="nav" aria-label="Módulos"></nav><a class="qt" href="#cotizacion" onclick="event.preventDefault();quote()">📄 Mirar cotización</a><div class="af">Datos locales · Tema configurable con Tailwind (ver documentación)</div></aside>
-<div class="col"><header class="top"><span class="mbrand">🚛 <b>Manifiesta</b></span><h1 id="ttl"></h1><span class="sp"></span><a class="qt qm" href="#cotizacion" onclick="event.preventDefault();quote()" aria-label="Mirar cotización">📄<span class="tx"> Cotización</span></a><select id="ut" aria-label="Empresa" onchange="swT(this.value)"></select><select id="uu" aria-label="Usuario" onchange="swU(this.value)"></select><div class="seg" id="th" role="group" aria-label="Tema"></div></header><main id="mn"></main></div></div>
+<div class="app"><aside><div class="brand">🚛<div><b>Manifiesta</b><small>Prototipo MVP</small></div></div><nav id="nav" aria-label="Módulos"></nav><a class="qt" href="#como-usar" onclick="event.preventDefault();S.tab='help';go(1)">📖 Cómo usar</a><a class="qt" href="#cotizacion" onclick="event.preventDefault();quote()">📄 Mirar cotización</a><div class="af">Datos locales · Tema configurable con Tailwind (ver documentación)</div></aside>
+<div class="col"><header class="top"><span class="mbrand">🚛 <b>Manifiesta</b></span><h1 id="ttl"></h1><span class="sp"></span><a class="qt qm" href="#como-usar" onclick="event.preventDefault();S.tab='help';go(1)" aria-label="Cómo usar">📖<span class="tx"> Cómo usar</span></a><a class="qt qm" href="#cotizacion" onclick="event.preventDefault();quote()" aria-label="Mirar cotización">📄<span class="tx"> Cotización</span></a><select id="ut" aria-label="Empresa" onchange="swT(this.value)"></select><select id="uu" aria-label="Usuario" onchange="swU(this.value)"></select><div class="seg" id="th" role="group" aria-label="Tema"></div></header><main id="mn"></main></div></div>
 <div id="md"></div><div id="ts" aria-live="polite"></div>
 <script>
 
@@ -219,11 +228,11 @@ ${T(['Concepto','Tipo','Valor'],[['Implementación inicial','Pago único','<b>$5
 function head(){const t=ls('terp-theme')||'system';$('#ut').innerHTML=S.mem.filter(m=>m.u==S.ses.u).map(m=>`<option value="${m.t}" ${m.t==S.ses.t?'selected':''}>${S.tenants.find(x=>x.id==m.t).name}</option>`).join('');
 $('#uu').innerHTML=S.users.map(u=>`<option value="${u.id}" ${u.id==S.ses.u?'selected':''}>${u.name}</option>`).join('');
 const nv=NAV.filter(n=>n[0]=='dash'||can(n[0])||(n[0]=='admin'&&M()?.role=='admin'));$('#nav').innerHTML=nv.map(n=>`<button class="ni ${S.tab==n[0]?'on':''}" onclick="S.tab='${n[0]}';go(1)"><span>${n[2]}</span>${n[1]}</button>`).join('');
-$('#ttl').textContent=(NAV.find(n=>n[0]==S.tab)||NAV[0])[1];document.querySelector('.ni.on')?.scrollIntoView({inline:'center',block:'nearest'});$('#th').innerHTML=[['light','☀️ Claro'],['dark','🌙 Oscuro'],['system','💻 Sistema']].map(x=>`<button class="${t==x[0]?'on':''}" onclick="setTheme('${x[0]}')" title="${x[1]}" aria-label="${x[1]}"><span aria-hidden="true">${x[1].split(' ')[0]}</span><span class="tx"> ${x[1].split(' ')[1]}</span></button>`).join('')}
+$('#ttl').textContent=S.tab=='help'?'Cómo usar':(NAV.find(n=>n[0]==S.tab)||NAV[0])[1];document.querySelector('.ni.on')?.scrollIntoView({inline:'center',block:'nearest'});$('#th').innerHTML=[['light','☀️ Claro'],['dark','🌙 Oscuro'],['system','💻 Sistema']].map(x=>`<button class="${t==x[0]?'on':''}" onclick="setTheme('${x[0]}')" title="${x[1]}" aria-label="${x[1]}"><span aria-hidden="true">${x[1].split(' ')[0]}</span><span class="tx"> ${x[1].split(' ')[1]}</span></button>`).join('')}
 function swU(u){S.ses.u=u;if(!M())S.ses.t=S.mem.find(m=>m.u==u).t;S.tab='dash';go(1)}
 function swT(t){S.ses.t=t;S.tab='dash';go(1)}
 function cu(a){document.querySelectorAll('[data-n]:not(button)').forEach(el=>{const n=+el.dataset.n,m=el.dataset.m,fmt=v=>m?$$(v):Math.round(v);if(!a){el.textContent=fmt(n);return}const t0=performance.now(),f=t=>{const p=Math.min(1,(t-t0)/750);el.textContent=fmt(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
-function go(a){save();head();MOUNT=[];const ok=S.tab=='dash'||can(S.tab)||(S.tab=='admin'&&M()?.role=='admin'),mn=$('#mn');
+function go(a){save();head();MOUNT=[];const ok=S.tab=='dash'||S.tab=='help'||can(S.tab)||(S.tab=='admin'&&M()?.role=='admin'),mn=$('#mn');
 mn.innerHTML=ok?VIEWS[S.tab]():'<div class="c empty">🔒 Sin permiso para este módulo.</div>';MOUNT.forEach(f=>f());
 if(a){mn.classList.remove('vin');void mn.offsetWidth;mn.classList.add('vin');scrollTo({top:0})}cu(a)}
 
@@ -256,6 +265,156 @@ bar('Cartera vencida')+tbl([['Factura',r=>r.number],['Tipo',r=>r.kind],['Vence',
 admin(){const t=S.tenants.find(x=>x.id==S.ses.t),ms=S.mem.filter(m=>m.t==t.id);
 return bar('Empresa, usuarios y cupos',`<span class="t">Cupos ${ms.length}/${t.seats}</span><button class="p" onclick="uf()">+ Membresía</button>`)+tbl([['Usuario',r=>S.users.find(u=>u.id==r.u).name],['Rol',r=>`<span class="t">${r.role}</span>`],['Permisos',r=>ROLES[r.role].join(', ')],['',r=>`<button class="s d" onclick="um('${r.u}')">Quitar</button>`]],ms)+bar('Auditoría')+tbl([['Fecha',r=>r.ts],['Usuario',r=>r.u],['Acción',r=>r.a]],D().audit.slice(0,25))}};
 
+const MANUAL=[
+{id:'conceptos',i:'🚀',t:'Bienvenida y conceptos básicos',b:[
+['p','<b>Manifiesta</b> es un sistema para empresas de transporte de carga. Registra los servicios con su manifiesto, controla la flota, factura, administra el dinero (gastos, anticipos, cobros y pagos) y calcula la utilidad mensual de cada vehículo.'],
+['warn','Esta versión es un <b>prototipo</b>: los datos se guardan solo en el navegador de este dispositivo, las empresas y usuarios son de demostración y no hay conexión con la DIAN. Los límites completos están en la última sección.'],
+['tb',['Término','Qué es','Dónde se gestiona'],[
+['Empresa','Cada compañía que usa el sistema. Sus datos están aislados de las demás.','Selector de empresa (cabecera)'],
+['Usuario y rol','Persona con acceso. Su rol decide qué módulos ve.','Empresa (solo administradores)'],
+['Tercero','Cliente al que se le cobra o proveedor al que se le paga.','Terceros'],
+['Vehículo','Unidad que genera ingresos y costos. Tiene un acuerdo de reparto de utilidades.','Flota'],
+['Conductor','Persona asignada a vehículos y servicios; recibe anticipos.','Flota'],
+['Servicio','Viaje o movimiento de carga con su manifiesto y valor del flete.','Operaciones'],
+['Factura','Emitida (a un cliente) o recibida (de un proveedor), con saldo pendiente.','Facturación'],
+['Movimiento','Ingreso, gasto o anticipo de dinero.','Finanzas'],
+['Liquidación','Cálculo mensual de ingresos, costos, utilidad y reparto por vehículo.','Liquidaciones'],
+['Período','Mes que se analiza o se cierra (formato año-mes, por ejemplo 2026-11).','Liquidaciones y Reportes']]],
+['p','<b>Flujo recomendado la primera vez:</b>'],
+['ol',['Crear clientes y proveedores en <b>Terceros</b>.','Crear conductores y vehículos en <b>Flota</b>.','Registrar los viajes en <b>Operaciones</b> y marcarlos como Completado.','Emitir las facturas en <b>Facturación</b>.','Registrar gastos y anticipos en <b>Finanzas</b> y aplicar cobros y pagos.','Revisar y cerrar el mes en <b>Liquidaciones</b>.','Consultar <b>Reportes</b> y exportar lo que necesite.']]]},
+{id:'acceso',i:'🔐',t:'Empresas, usuarios y roles',b:[
+['p','En la cabecera hay dos selectores: <b>empresa</b> y <b>usuario</b> (en el celular van en la segunda fila). Cada empresa tiene sus propios terceros, vehículos, servicios y cifras: lo que se registra en una no aparece en otra. En un sistema real el usuario entra con su cuenta; aquí el selector sirve para probar los roles.'],
+['tb',['Rol','Módulos que ve','Para qué sirve'],[
+['Administrador','Todos, más Empresa','Configura usuarios y cupos, y consulta la auditoría.'],
+['Operador','Terceros, Flota y Operaciones','Registra la operación diaria.'],
+['Contador','Facturación, Finanzas, Liquidaciones y Reportes','Maneja el dinero, los cierres y los reportes.']]],
+['p','<b>Inicio</b> y este manual están disponibles para todos los roles.'],
+['ul',['<b>Ana</b>: administradora en las cuatro empresas.','<b>Beto</b>: operador, solo en Transportes Andina.','<b>Carla</b>: contadora en Transportes Andina y Logística Bahía.']],
+['tip','Si un módulo no aparece en el menú, el rol del usuario actual no tiene permiso. Al cambiar de empresa o de usuario, el sistema vuelve a Inicio.']]},
+{id:'interfaz',i:'🧭',t:'Navegación, temas y uso en celular',b:[
+['p','<b>En computador:</b> el menú está en la barra lateral y arriba están los selectores de empresa y usuario, y el selector de tema. <b>En celular:</b> el menú pasa a una barra inferior que se desliza hacia los lados; las tablas se convierten en tarjetas y los formularios se abren como hojas desde abajo.'],
+['p','<b>Tema:</b> pulse ☀️ Claro, 🌙 Oscuro o 💻 Sistema. «Sistema» sigue la configuración de su dispositivo y cambia solo. El sistema recuerda su elección.'],
+['p','<b>Formularios:</b> los campos con asterisco rojo (*) son obligatorios. Si algo está mal, el error aparece bajo el campo y el formulario se sacude. Se cierran con «Cancelar», con la tecla <code>Esc</code> o tocando fuera.'],
+['p','<b>Selectores con búsqueda</b> (vehículo, conductor, cliente, proveedor):'],
+['ol',['Toque el campo: se abre la lista con los primeros registros.','Escriba para filtrar; la búsqueda espera un instante a que termine de escribir.','Elija con el toque o con las flechas <code>↑</code> <code>↓</code> y <code>Enter</code>. <code>Esc</code> cierra la lista.','Desplácese al final de la lista para cargar más resultados.','Si aparece un error, use «Reintentar».']],
+['tip','Solo aparecen registros <b>activos</b>. En los selectores de cliente salen clientes y «ambos»; en los de proveedor, proveedores y «ambos».'],
+['p','<b>Avisos:</b> los mensajes verdes confirman que algo se guardó; los rojos explican por qué una acción no se pudo hacer.']]},
+{id:'inicio',i:'🏠',t:'Inicio (tablero)',b:[
+['p','Muestra el resumen del período seleccionado (por defecto 2026-11; se cambia en Liquidaciones o Reportes). Los números suben animados al abrir la pantalla.'],
+['tb',['Indicador','Cómo se calcula'],[
+['Servicios del mes','Servicios con fecha dentro del período, en cualquier estado.'],
+['Facturado','Suma del total de todas las facturas emitidas.'],
+['Por cobrar','Saldo pendiente de las facturas emitidas.'],
+['Por pagar','Saldo pendiente de las facturas recibidas.'],
+['Utilidad consolidada','Suma de la utilidad de todos los vehículos en el período (ingresos − gastos directos − gastos generales asignados).'],
+['Vehículos activos','Vehículos con estado operativo «Activo».']]],
+['p','Debajo hay un gráfico de barras con la <b>utilidad por vehículo</b> (rojo si es negativa) y la lista de los <b>últimos 5 servicios</b>.']]},
+{id:'terceros',i:'🤝',t:'Terceros (clientes y proveedores)',b:[
+['p','Es la lista de las personas y empresas con las que trabaja. Cada tercero tiene un rol: <b>cliente</b> (se le factura), <b>proveedor</b> (se le paga) o <b>ambos</b>.'],
+['p','<b>Para crear uno:</b>'],
+['ol',['Pulse «+ Nuevo».','Escriba el nombre y el NIT (no puede repetirse en la misma empresa).','Elija el rol y pulse «Guardar».']],
+['p','<b>Para trabajar con la lista:</b>'],
+['ul',['<b>Buscar:</b> el cuadro filtra por cualquier dato del registro.','<b>Filtros:</b> Todos, Activos o Inactivos.','<b>Paginación:</b> 10 registros por página.','<b>Editar:</b> cambia los datos.','<b>Desactivar / Activar:</b> un tercero inactivo deja de aparecer en los selectores, pero conserva su historial.','<b>Eliminar:</b> pide confirmación.']],
+['warn','Si el tercero ya tiene servicios o facturas, no se elimina: el sistema muestra dónde está en uso (por ejemplo, «Servicios (2)») y sugiere desactivarlo.']]},
+{id:'flota',i:'🚚',t:'Flota: vehículos, conductores y mantenimiento',b:[
+['p','<b>Vehículos</b> — pulse «+ Nuevo» en la tabla de vehículos.'],
+['tb',['Campo','Obligatorio','Regla'],[
+['Placa','Sí','Única por empresa. Se guarda en mayúsculas.'],
+['Tipo y marca','Sí','Texto libre (por ejemplo, Tractomula, Kenworth).'],
+['Capacidad (t)','Sí','Número en toneladas.'],
+['Conductor','No','Se elige con el selector de búsqueda.'],
+['Estado operativo','Sí','Activo, Mantenimiento o Inactivo.'],
+['Acuerdo de utilidades','Sí','Formato <code>Nombre:porcentaje</code> separado por comas. Debe sumar 100 %.']]],
+['p','<b>Acuerdo de utilidades:</b> define cómo se reparte la utilidad del vehículo. Ejemplo: <code>Empresa:50,Socio A:50</code> reparte mitad y mitad; <code>Empresa:100</code> deja todo a la empresa. Si no suma 100, el sistema no deja guardar.'],
+['p','<b>Conductores</b> — nombre, documento (único) y teléfono opcional. No se pueden eliminar si tienen servicios, vehículos o movimientos asociados; desactívelos.'],
+['p','<b>Mantenimiento</b> — pulse «+ Mantenimiento»:'],
+['ol',['Elija el vehículo y la fecha.','Escriba la descripción y el costo.','Al guardar, queda en el historial y además se crea <b>automáticamente un gasto directo</b> del vehículo en Finanzas.']],
+['tip','Solo los vehículos con estado «Activo» cuentan como activos en el tablero y en el reparto de gastos generales cuando un mes no tiene ingresos.'],
+['warn','Si el período de ese vehículo ya está cerrado, el sistema no permite registrar el mantenimiento.']]},
+{id:'operaciones',i:'🧭',t:'Operaciones: servicios y manifiestos',b:[
+['p','Aquí se registra cada viaje. <b>Para crear uno</b>, pulse «+ Servicio» (antes debe haber al menos un vehículo y un conductor):'],
+['ol',['Indique la fecha.','Elija el vehículo, el conductor y el cliente.','Elija el movimiento: <b>TRAS</b> (traslado), <b>EXPO</b> (exportación), <b>IMPO</b> (importación) o <b>VACIO</b> (viaje en vacío). Las descripciones son referenciales.','Escriba origen, destino y número de manifiesto.','Escriba el valor del flete y pulse «Guardar».']],
+['tb',['Estado','Significado','Efecto'],[
+['Abierto','Registrado, aún no inicia.','No genera ingresos.'],
+['En curso','El viaje está en marcha.','No genera ingresos.'],
+['Completado','El viaje terminó.','Cuenta como ingreso del vehículo y puede facturarse.'],
+['Anulado','Se canceló.','No cuenta.']]],
+['p','El estado se cambia directamente desde el selector de la columna «Estado». En la columna «Factura» aparece el número cuando el servicio ya fue facturado.'],
+['tip','Un viaje de regreso en vacío se registra con valor 0.'],
+['warn','Si el período del vehículo está cerrado, no se pueden crear servicios con fecha en ese mes ni cambiar el estado de los existentes.']]},
+{id:'facturacion',i:'🧾',t:'Facturación',b:[
+['p','<b>Emitir una factura a un cliente:</b>'],
+['ol',['Pulse «+ Emitir (desde servicios)».','Elija un servicio <b>Completado</b> que aún no esté facturado.','Indique la fecha de vencimiento y guarde.','El sistema asigna un número consecutivo por empresa (<code>FV-0001</code>, <code>FV-0002</code>…), toma el valor del flete como total y la fecha de hoy como fecha de emisión.']],
+['p','<b>Registrar una factura recibida de un proveedor:</b>'],
+['ol',['Pulse «+ Registrar recibida».','Elija el proveedor y escriba el número de su factura.','Indique el vencimiento y el total.','Opcionalmente escriba el nombre del archivo adjunto (en el prototipo solo se guarda el nombre, no el archivo).']],
+['p','<b>Descargar:</b> genera un documento interno de la factura. No tiene validez ante la DIAN.'],
+['p','<b>Recaudar o pagar:</b>'],
+['ol',['En una factura emitida pulse «Recaudar»; en una recibida, «Pagar».','Escriba el valor: debe ser mayor que 0 y no superar el saldo. Se permiten abonos parciales.','Al guardar, el saldo baja y se crea un movimiento automático (recaudo o pago) en Finanzas.','Cuando el saldo llega a 0, la factura queda como «Pagada».']],
+['tip','Si no puede emitir porque no hay servicios para facturar, vaya a Operaciones y revise que estén en estado Completado.']]},
+{id:'finanzas',i:'💰',t:'Finanzas',b:[
+['p','Pulse «+ Movimiento» para registrar dinero que entra o sale. El tipo decide qué más pide el formulario y cómo afecta las cifras:'],
+['tb',['Tipo','Para qué sirve','Exige','Efecto en la liquidación'],[
+['Gasto directo','Costos de un vehículo: combustible, peajes, reparaciones.','Vehículo','Resta a la utilidad de ese vehículo.'],
+['Gasto general','Costos de la empresa: arriendo, servicios, administración.','Nada','Se reparte entre los vehículos según sus ingresos.'],
+['Anticipo','Dinero entregado a un conductor para el viaje.','Conductor','No es gasto; se compara con los gastos del conductor.'],
+['Ingreso','Otros ingresos que quiera registrar.','—','No entra al cálculo de la liquidación.'],
+['Recaudo / Pago','Los crea el sistema al cobrar o pagar facturas.','—','Ninguno; no se pueden borrar a mano.']]],
+['p','En el formulario: elija el tipo y, si es gasto, la clase (Directo o General). Indique fecha, vehículo, conductor, detalle y valor. El valor debe ser mayor que 0.'],
+['tip','Para que un gasto cuente en la liquidación del <b>conductor</b>, seleccione también al conductor al registrarlo.'],
+['warn','Los ingresos de cada vehículo en la liquidación salen de los <b>servicios completados</b>, no de los movimientos de tipo Ingreso. Si registra un ingreso manual, no cambia la utilidad.'],
+['p','<b>Cuentas por cobrar y por pagar:</b> debajo de los movimientos hay dos tablas con las facturas que aún tienen saldo, con su vencimiento. Se actualizan al recaudar o pagar.']]},
+{id:'liquidaciones',i:'📊',t:'Liquidaciones',b:[
+['p','Elija el <b>mes</b> en la parte superior. Cada fila es un vehículo:'],
+['tb',['Columna','Qué muestra'],[
+['Ingresos','Suma de los servicios Completados del vehículo en el mes.'],
+['Gastos directos','Gastos de clase Directo asignados al vehículo (incluye mantenimientos).'],
+['Gastos generales asig.','Parte de los gastos generales del mes: gasto general × (ingresos del vehículo ÷ ingresos de todos). Si no hubo ingresos, se reparte por partes iguales entre los vehículos activos.'],
+['Utilidad','Ingresos − gastos directos − gastos generales asignados.'],
+['Distribución','Reparto de la utilidad según el acuerdo del vehículo. Solo se reparte si la utilidad es positiva.'],
+['Estado','Borrador (se recalcula) o Cerrada (cifras congeladas).']]],
+['p','<b>Ejemplo con los datos de demostración de Transportes Andina, noviembre de 2026:</b> el vehículo TRK-101 tuvo ingresos de $5.900.000 y gastos directos de $650.000; los gastos generales fueron $900.000 y los ingresos totales $12.300.000. Su parte de gastos generales es ≈ $431.707 y su utilidad ≈ <b>$4.818.293</b>. Con un acuerdo 50/50, a la empresa y al socio les corresponde ≈ $2.409.146 a cada uno.'],
+['p','<b>Cerrar un período:</b>'],
+['ol',['Revise las cifras del vehículo.','Pulse «Cerrar período» y confirme.','El sistema guarda una fotografía de ingresos, costos, utilidad y reparto, y la fila pasa a «Cerrada».']],
+['warn','Con el período cerrado se bloquea crear o modificar servicios, mantenimientos y movimientos de <b>ese vehículo</b> en ese mes. Los gastos generales (sin vehículo) no se bloquean, pero las cifras ya cerradas no cambian.'],
+['p','<b>Reversar un cierre:</b> pulse «Reversar», escriba la justificación (obligatoria) y confirme. El período se reabre, la liquidación vuelve a Borrador y la acción queda en la Auditoría. Después puede corregir y cerrar de nuevo.'],
+['p','<b>Liquidación de conductores:</b> la segunda tabla compara, por conductor y mes, los <b>anticipos</b> recibidos con los <b>gastos justificados</b>. El «Saldo a favor empresa» es anticipos − gastos: si es positivo, el conductor debe devolver esa suma; si es negativo (en rojo), la empresa le debe reembolsar. En la demostración, Carlos Pérez recibió $800.000 y justificó $650.000: saldo a favor de la empresa de $150.000.']]},
+{id:'reportes',i:'📈',t:'Reportes',b:[
+['p','Elija el mes arriba. Los reportes disponibles son:'],
+['ul',['<b>Rentabilidad por vehículo:</b> ingresos, gastos directos, gastos generales y utilidad.','<b>Ingresos por cliente:</b> suma de los servicios Completados del mes por cliente.','<b>Cartera vencida:</b> facturas con saldo cuyo vencimiento ya pasó, emitidas o recibidas.']],
+['p','El botón <b>Exportar CSV</b> descarga la rentabilidad por vehículo del mes seleccionado, listo para abrir en Excel.']]},
+{id:'empresa',i:'🏢',t:'Empresa (solo administradores)',b:[
+['p','Gestiona quién puede usar el sistema en la empresa actual.'],
+['ul',['<b>Cupos:</b> la insignia «Cupos 3/3» indica usuarios activos frente al máximo del plan. Cada membresía activa ocupa un cupo.','<b>+ Membresía:</b> elija un usuario y su rol. Falla si ya es miembro o si no quedan cupos.','<b>Quitar:</b> libera el cupo. No puede quitarse a sí mismo.','<b>Auditoría:</b> las últimas 25 acciones, con fecha, usuario y descripción (altas, cierres, reversiones, pagos, etc.).']],
+['tip','Un mismo usuario puede pertenecer a varias empresas con roles distintos y ocupa un cupo en cada una.']]},
+{id:'cierre',i:'✅',t:'Lista de verificación del cierre mensual',b:[
+['ol',['Cambie el mes en Liquidaciones al período que va a cerrar.','En Operaciones, confirme que todos los viajes terminados estén en <b>Completado</b> y que no queden viajes sin estado correcto.','En Facturación, emita las facturas de los servicios completados.','En Finanzas, registre todos los gastos directos y generales, y los anticipos del mes.','Aplique los cobros y pagos realizados.','Revise la liquidación de conductores y concilie los anticipos pendientes.','Revise la utilidad de cada vehículo y el reparto.','Pulse «Cerrar período» en cada vehículo.','Exporte el CSV desde Reportes si lo necesita.']]]},
+{id:'faq',i:'🛠️',t:'Problemas frecuentes',b:[
+['tb',['Mensaje o síntoma','Causa','Qué hacer'],[
+['«Período cerrado para este vehículo»','La liquidación de ese vehículo y mes está cerrada.','Reverse el cierre con justificación, corrija y vuelva a cerrar.'],
+['«NIT duplicado» o «Placa duplicada» o «Documento duplicado»','Ya existe ese dato en la empresa.','Busque el registro existente; si está inactivo, actívelo.'],
+['«El acuerdo debe sumar 100%»','Los porcentajes no suman 100.','Corrija el acuerdo, por ejemplo <code>Empresa:60,Socio A:40</code>.'],
+['No se puede eliminar un registro','Está en uso en servicios, facturas o movimientos.','Desactívelo para que deje de aparecer en los selectores.'],
+['«No hay servicios completados sin facturar»','Los servicios están en otro estado o ya se facturaron.','Cambie el estado a Completado en Operaciones.'],
+['Un tercero no aparece en el selector','Está inactivo o tiene el rol contrario (proveedor en un selector de cliente).','Actívelo o cambie su rol a «ambos».'],
+['«Un gasto directo requiere vehículo» o «Un anticipo requiere conductor»','Falta el dato obligatorio.','Seleccione el vehículo o el conductor.'],
+['«Cupos agotados»','La empresa llegó al máximo de usuarios activos.','Quite una membresía o amplíe el plan.'],
+['No veo un módulo','El rol del usuario no tiene permiso.','Entre con otro usuario o pida a un administrador cambiar el rol.'],
+['La utilidad no cambia al registrar un ingreso','Los ingresos salen de servicios Completados.','Registre o complete el servicio en Operaciones.'],
+['Los datos desaparecieron','Se borró el almacenamiento del navegador, o está en modo privado.','En el prototipo no hay respaldo; use un navegador normal.']]]]},
+{id:'limites',i:'⚠️',t:'Alcance y límites del prototipo',b:[
+['ul',['Los datos viven en el navegador (<code>localStorage</code>) de este dispositivo: no se comparten entre equipos y no hay copias de seguridad.','El selector de usuario es de demostración: no hay contraseñas ni inicio de sesión real.','Las facturas son documentos internos, sin facturación electrónica ni conexión con la DIAN.','Los adjuntos guardan solo el nombre del archivo.','No hay contabilidad de partida doble, nómina, GPS ni aplicación móvil para conductores.','No hay control de concurrencia: dos personas editando a la vez no se coordinan.','Los gastos generales y los ingresos manuales no se bloquean al cerrar un vehículo.','Las cifras monetarias están en pesos colombianos (COP).']],
+['p','En la versión definitiva, estas partes se resuelven con el servidor (autenticación, base de datos compartida, copias de seguridad y transacciones). Para las condiciones comerciales use el enlace «Mirar cotización».']]}
+];
+const mdT=s=>s.replace(/<b>(.*?)<\/b>/g,'**$1**').replace(/<code>(.*?)<\/code>/g,'`$1`').replace(/<[^>]+>/g,'');
+function mdOf(){return '# Manifiesta — Manual de usuario\n\nVersión del prototipo MVP · noviembre de 2026\n\n'+MANUAL.map(s=>'## '+s.i+' '+s.t+'\n\n'+s.b.map(([t,a,c])=>t=='p'?mdT(a):t=='ul'?a.map(x=>'- '+mdT(x)).join('\n'):t=='ol'?a.map((x,i)=>(i+1)+'. '+mdT(x)).join('\n'):t=='tip'?'> 💡 '+mdT(a):t=='warn'?'> ⚠️ '+mdT(a):'| '+a.join(' | ')+' |\n|'+a.map(()=>'---').join('|')+'|\n'+c.map(r=>'| '+r.map(mdT).join(' | ')+' |').join('\n')).join('\n\n')).join('\n\n')+'\n'}
+/* ===== Página «Cómo usar»: el mismo contenido (MANUAL) se muestra y se descarga como .md ===== */
+let HQ='';
+const bh=([t,a,c])=>t=='p'?`<p>${a}</p>`:t=='ul'?`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`:t=='ol'?`<ol>${a.map(x=>`<li>${x}</li>`).join('')}</ol>`:t=='tip'?`<div class="hb">💡 ${a}</div>`:t=='warn'?`<div class="hb warn">⚠️ ${a}</div>`:tbl(a.map((h,i)=>[h,r=>r[i]]),c);
+function manualBody(){const q=HQ.toLowerCase(),ss=MANUAL.filter(s=>!q||JSON.stringify(s).toLowerCase().includes(q));return ss.map(s=>`<section class="sec" id="h-${s.id}"><h2>${s.i} ${s.t}</h2>${s.b.map(bh).join('')}</section>`).join('')||'<div class="c empty">🔎<br>Sin resultados</div>'}
+function helpGo(id){document.getElementById('h-'+id)?.scrollIntoView({behavior:'smooth',block:'start'})}
+function helpQ(v){HQ=v;$('#hb').innerHTML=manualBody()}
+function dlManual(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([mdOf()],{type:'text/markdown'}));a.download='manual-de-usuario-manifiesta.md';a.click()}
+VIEWS.help=()=>bar('Manual de usuario','<button onclick="dlManual()">⬇ Descargar (.md)</button>')+`<div class="tool"><input type="search" class="q" id="hq" placeholder="Buscar en el manual…" aria-label="Buscar en el manual" value="${HQ.replace(/"/g,'')}" oninput="helpQ(this.value)"></div><div class="man"><nav class="toc" aria-label="Contenido del manual">${MANUAL.map(s=>`<button onclick="helpGo('${s.id}')">${s.i} ${s.t.split(':')[0].split(' (')[0]}</button>`).join('')}</nav><div id="hb">${manualBody()}</div></div>`;
 Object.assign(VIEWS,{
 dash(){const d=D(),per=S.per,vs=d.vehicles.map(v=>({v,p:calc(v.id,per).profit})),util=vs.reduce((a,x)=>a+x.p,0),mx=Math.max(1,...vs.map(x=>Math.abs(x.p)));
 const em=d.invoices.filter(i=>i.kind=='emitida'),cxc=em.reduce((a,i)=>a+bal(i),0),cxp=d.invoices.filter(i=>i.kind=='recibida').reduce((a,i)=>a+bal(i),0);
@@ -286,5 +445,5 @@ function um(u){if(u==S.ses.u){toast('No puede quitarse a sí mismo');return}S.me
 function csv(){const per=S.per,r=[['Vehiculo','Ingresos','Directos','Generales','Utilidad'],...D().vehicles.map(v=>{const c=calc(v.id,per);return[v.plate,c.inc,c.dir,Math.round(c.gen),Math.round(c.profit)]})];
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([r.map(x=>x.join(',')).join('\n')],{type:'text/csv'}));a.download='rentabilidad-'+per+'.csv';a.click()}
 
-go(1);if(location.hash=='#cotizacion')quote();
+go(1);if(location.hash=='#cotizacion')quote();if(location.hash=='#como-usar'){S.tab='help';go(1)}
 </script></body></html>
