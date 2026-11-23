@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="es" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Transport ERP · Prototipo MVP</title>
+<!DOCTYPE html><html lang="es" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Manifiesta · Prototipo MVP</title>
 <script>(function(){try{var m=localStorage.getItem('terp-theme')||'system';document.documentElement.dataset.theme=m=='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):m}catch(e){}})()</script>
 <style>
 /* NOTA DE DISEÑO: los tokens (--bg, --sf, --tx, --ac…) son canales RGB pensados para mapearse a Tailwind:
@@ -49,11 +49,46 @@ tbody tr{animation:vin .35s both;animation-delay:calc(var(--i)*28ms);transition:
 .ts{padding:10px 14px;border-radius:12px;background:rgb(var(--tx));color:rgb(var(--sf));box-shadow:var(--sh);animation:ti .3s cubic-bezier(.2,.9,.3,1.2)}.ts.out{animation:ti .25s reverse forwards}.ts.ok{border-left:4px solid rgb(var(--ok))}.ts.err{border-left:4px solid rgb(var(--rd))}
 @keyframes vin{from{opacity:0;transform:translateY(10px)}}@keyframes fd{from{opacity:0}}@keyframes pop{from{opacity:0;transform:scale(.94) translateY(8px)}}@keyframes ti{from{opacity:0;transform:translateX(24px)}}
 @keyframes sh{to{background-position:-200% 0}}@keyframes wd{from{width:0}}@keyframes grow{from{transform:scaleY(0)}}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-@media(max-width:860px){.app{grid-template-columns:1fr}aside{position:sticky;z-index:5;height:auto;flex-direction:row;align-items:center;overflow-x:auto;padding:8px 12px}.af,.brand small{display:none}#nav{flex-direction:row;flex:none}.ni{white-space:nowrap}.ni.on::before{display:none}.top{position:static;padding:10px 12px}main{padding:14px 12px}.g{grid-template-columns:1fr}.br{grid-template-columns:70px 1fr 90px}}
+html{-webkit-text-size-adjust:100%}body{-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+.mbrand{display:none;align-items:center;gap:6px;font-size:16px}.top .qm{display:none}
+@media(max-width:860px){
+.app{display:block}
+aside{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:15;height:auto;flex-direction:row;gap:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));border-right:0;border-top:1px solid rgb(var(--bd));background:rgb(var(--sf)/.94);backdrop-filter:blur(14px);overflow:hidden}
+.brand,.af,aside .qt{display:none}
+#nav{flex-direction:row;flex:1;gap:2px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}#nav::-webkit-scrollbar{display:none}
+.ni{flex:0 0 auto;min-width:70px;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;font-size:11px;white-space:nowrap;scroll-snap-align:center}.ni span{font-size:21px;line-height:1.1}.ni.on::before{display:none}
+.top{position:sticky;top:0;gap:8px;padding:10px 12px}.top h1,.top .sp{display:none}.mbrand{display:flex;order:1;flex:1 1 auto}.top .qm{display:flex;order:2;padding:8px 11px}.seg{order:3}.tx{display:none}
+#ut,#uu{order:4;flex:1 1 46%;min-width:0;width:auto}
+main{padding:14px 12px calc(92px + env(safe-area-inset-bottom,0px))}
+input,select,button{min-height:42px;font-size:16px}button.s{min-height:34px;font-size:13px}.seg button{min-height:34px;font-size:15px}
+.g{grid-template-columns:1fr}.br{grid-template-columns:70px 1fr 90px}
+.k{grid-template-columns:repeat(2,1fr);gap:10px}.c{padding:12px}.c h3{font-size:18px}.c .ic{font-size:17px}
+.bar h2{flex:1 1 100%}.bar button{flex:1 1 auto}
+.tool .q{width:100%;flex:1 1 100%}.tool .seg{flex:1}.tool .seg button{flex:1}.tool .sp{display:none}.tool .p{flex:1 1 100%}
+#ts{left:12px;right:12px;bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+.m{align-items:flex-end;padding:0}
+.m>form,.m>div,html .m>div.q{width:100%;max-width:none;max-height:92dvh;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));animation:sheet .3s cubic-bezier(.2,.9,.3,1)}
+.m>form::before,.m>div::before{content:"";display:block;width:40px;height:4px;border-radius:4px;background:rgb(var(--bd));margin:-6px auto 12px}.m .bar .sp{display:none}.m .bar button{min-height:46px}
+.ms-l{max-height:40dvh}
+}
+@media(max-width:700px){
+.w{background:none;border:0;box-shadow:none;overflow:visible}
+table,thead,tbody,tr,td{display:block}thead{display:none}
+tbody tr{background:rgb(var(--sf));border:1px solid rgb(var(--bd));border-radius:14px;box-shadow:var(--sh);margin-bottom:10px;padding:6px 0}
+td{display:flex;justify-content:space-between;align-items:center;gap:14px;border:0;padding:5px 14px;white-space:normal;text-align:right}
+td::before{content:attr(data-l);flex:none;text-align:left;color:rgb(var(--mu));font-size:12px;font-weight:600}
+td[data-l=""]::before,td:not([data-l])::before{content:none}
+tbody tr td[data-l=""]{justify-content:flex-end;margin-top:4px;padding-top:9px;border-top:1px solid rgb(var(--bd))}
+td:not([data-l]){justify-content:center}.act{flex-wrap:wrap;justify-content:flex-end}.pg{justify-content:space-between}
+}
+@media(hover:none){.ni:hover,.k .c:hover,.qt:hover{transform:none}tbody tr:hover{background:none}}
+@keyframes sheet{from{transform:translateY(100%)}}
+.qt{display:flex;gap:8px;align-items:center;margin:0 4px;padding:9px 12px;border-radius:10px;background:rgb(var(--ac)/.12);color:rgb(var(--ac));font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .2s,background .2s}.qt:hover{background:rgb(var(--ac)/.22);transform:translateX(2px)}
+.m>div.q{width:min(760px,100%)}.q h4{margin:16px 0 4px}.q p{margin:4px 0}.q .w{box-shadow:none}
 @media(prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
 </style></head><body>
-<div class="app"><aside><div class="brand">🚛<div><b>Transport ERP</b><small>Prototipo MVP</small></div></div><nav id="nav" aria-label="Módulos"></nav><div class="af">Datos locales · Tema configurable con Tailwind (ver documentación)</div></aside>
-<div class="col"><header class="top"><h1 id="ttl"></h1><span class="sp"></span><select id="ut" aria-label="Empresa" onchange="swT(this.value)"></select><select id="uu" aria-label="Usuario" onchange="swU(this.value)"></select><div class="seg" id="th" role="group" aria-label="Tema"></div></header><main id="mn"></main></div></div>
+<div class="app"><aside><div class="brand">🚛<div><b>Manifiesta</b><small>Prototipo MVP</small></div></div><nav id="nav" aria-label="Módulos"></nav><a class="qt" href="#cotizacion" onclick="event.preventDefault();quote()">📄 Mirar cotización</a><div class="af">Datos locales · Tema configurable con Tailwind (ver documentación)</div></aside>
+<div class="col"><header class="top"><span class="mbrand">🚛 <b>Manifiesta</b></span><h1 id="ttl"></h1><span class="sp"></span><a class="qt qm" href="#cotizacion" onclick="event.preventDefault();quote()" aria-label="Mirar cotización">📄<span class="tx"> Cotización</span></a><select id="ut" aria-label="Empresa" onchange="swT(this.value)"></select><select id="uu" aria-label="Usuario" onchange="swU(this.value)"></select><div class="seg" id="th" role="group" aria-label="Tema"></div></header><main id="mn"></main></div></div>
 <div id="md"></div><div id="ts" aria-live="polite"></div>
 <script>
 
@@ -96,7 +131,7 @@ addEventListener('keydown',e=>{if(e.key=='Escape')closeM()});
 function dlg(t,m,inp){return new Promise(r=>{openM(`<div role="dialog"><h3>${t}</h3><p class="mu">${m}</p>${inp?'<input id="di" placeholder="Escriba aquí…">':''}<div class="bar"><span class="sp"></span><button id="dn">Cancelar</button><button class="p" id="dy">Confirmar</button></div></div>`);
 $('#dn').onclick=()=>{closeM();r(inp?'':false)};$('#dy').onclick=()=>{const v=inp?$('#di').value.trim():true;closeM();r(v)}})}
 const bar=(t,b)=>`<div class="bar"><h2>${t}</h2>${b||''}</div>`;
-const tbl=(cols,rows)=>`<div class="w"><table><thead><tr>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr style="--i:${Math.min(i,12)}">${cols.map(c=>`<td>${c[1](r)}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${cols.length}"><div class="empty">📭<br>Sin registros</div></td></tr>`}</tbody></table></div>`;
+const tbl=(cols,rows)=>`<div class="w"><table><thead><tr>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr style="--i:${Math.min(i,12)}">${cols.map(c=>`<td data-l="${c[0]}">${c[1](r)}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${cols.length}"><div class="empty">📭<br>Sin registros</div></td></tr>`}</tbody></table></div>`;
 const skel=()=>`<div class="w">${'<div class="sk"></div>'.repeat(6)}</div>`;
 const opt=(l,k='name')=>D()[l].map(x=>[x.id,x[k]]);
 const del=async(l,id)=>{if(await dlg('Eliminar registro','Esta acción no se puede deshacer.')){D()[l]=D()[l].filter(x=>x.id!=id);log('Eliminó en '+l);go();toast('Eliminado','ok')}};
@@ -169,11 +204,22 @@ fields:[{k:'name',l:'Nombre'},{k:'doc',l:'Documento'},{k:'phone',l:'Teléfono',r
 references:[{collection:'services',field:'driverId',description:'Servicios'},{collection:'vehicles',field:'driverId',description:'Vehículos'},{collection:'moves',field:'driverId',description:'Movimientos'}],
 validate:(v,r)=>D().drivers.some(p=>p.doc==v.doc&&p.id!=r?.id)?{doc:'Documento duplicado'}:{}}};
 const mc=k=>{MOUNT.push(()=>MasterCrud(k,CFG[k],localAdapter(CFG[k])));return `<div id="mc-${k}"></div>`};
+/* ===== Cotización para el cliente (solo la parte comercial) ===== */
+function quote(){const T=(c,r)=>tbl(c.map((x,i)=>[x,q=>q[i]]),r);
+openM(`<div class="q" role="dialog" aria-label="Cotización"><h3>📄 Cotización · Manifiesta</h3><p class="mu">Valores en COP antes de IVA · Vigencia de 30 días (hasta el 22/12/2026)</p>
+${T(['Concepto','Tipo','Valor'],[['Implementación inicial','Pago único','<b>$500.000</b>'],['Mensualidad (hasta 5 usuarios activos)','Mensual','<b>$290.000</b>'],['Usuario activo adicional','Mensual por usuario','<b>$30.000</b>']])}
+<h4>Implementación inicial</h4><p>Alta de la empresa con datos aislados, entrega de 5 cuentas con roles y permisos, configuración inicial (numeración de facturas y acuerdos de utilidades) y una sesión de inducción.</p>
+<h4>Mensualidad</h4><p>Uso del sistema con hasta 5 usuarios activos, alojamiento y base de datos con copias de seguridad diarias, actualizaciones y soporte en horario hábil (lunes a viernes, 8:00 a 18:00).</p>
+<h4>Si necesita más usuarios</h4>${T(['Usuarios activos','Mensualidad','Anual'],[['Hasta 5','$290.000','$3.480.000'],['6','$320.000','$3.840.000'],['8','$380.000','$4.560.000'],['10','$440.000','$5.280.000'],['12','$500.000','$6.000.000'],['15','$590.000','$7.080.000']])}
+<p class="mu">Los usuarios desactivados no cuentan y se pueden intercambiar mientras no haya más de 5 activos. Un usuario adicional se cobra desde el mes siguiente a su activación. Reajuste anual según IPC.</p>
+<h4>Primer año con 5 usuarios</h4><p><b>$3.980.000</b> (500.000 + 12 × 290.000).</p>
+<h4>Fuera de alcance</h4><p>Facturación electrónica DIAN, contabilidad general, nómina, app móvil, GPS e inventario. Se cotizan aparte; horas adicionales a $80.000.</p>
+<div class="bar"><span class="sp"></span><button class="p" onclick="closeM()">Cerrar</button></div></div>`)}
 /* ===== Capa 4 · Shell (navegación, tema, empresa/usuario, transiciones) ===== */
 function head(){const t=ls('terp-theme')||'system';$('#ut').innerHTML=S.mem.filter(m=>m.u==S.ses.u).map(m=>`<option value="${m.t}" ${m.t==S.ses.t?'selected':''}>${S.tenants.find(x=>x.id==m.t).name}</option>`).join('');
 $('#uu').innerHTML=S.users.map(u=>`<option value="${u.id}" ${u.id==S.ses.u?'selected':''}>${u.name}</option>`).join('');
 const nv=NAV.filter(n=>n[0]=='dash'||can(n[0])||(n[0]=='admin'&&M()?.role=='admin'));$('#nav').innerHTML=nv.map(n=>`<button class="ni ${S.tab==n[0]?'on':''}" onclick="S.tab='${n[0]}';go(1)"><span>${n[2]}</span>${n[1]}</button>`).join('');
-$('#ttl').textContent=(NAV.find(n=>n[0]==S.tab)||NAV[0])[1];$('#th').innerHTML=[['light','☀️ Claro'],['dark','🌙 Oscuro'],['system','💻 Sistema']].map(x=>`<button class="${t==x[0]?'on':''}" onclick="setTheme('${x[0]}')" title="${x[1]}">${x[1]}</button>`).join('')}
+$('#ttl').textContent=(NAV.find(n=>n[0]==S.tab)||NAV[0])[1];document.querySelector('.ni.on')?.scrollIntoView({inline:'center',block:'nearest'});$('#th').innerHTML=[['light','☀️ Claro'],['dark','🌙 Oscuro'],['system','💻 Sistema']].map(x=>`<button class="${t==x[0]?'on':''}" onclick="setTheme('${x[0]}')" title="${x[1]}" aria-label="${x[1]}"><span aria-hidden="true">${x[1].split(' ')[0]}</span><span class="tx"> ${x[1].split(' ')[1]}</span></button>`).join('')}
 function swU(u){S.ses.u=u;if(!M())S.ses.t=S.mem.find(m=>m.u==u).t;S.tab='dash';go(1)}
 function swT(t){S.ses.t=t;S.tab='dash';go(1)}
 function cu(a){document.querySelectorAll('[data-n]:not(button)').forEach(el=>{const n=+el.dataset.n,m=el.dataset.m,fmt=v=>m?$$(v):Math.round(v);if(!a){el.textContent=fmt(n);return}const t0=performance.now(),f=t=>{const p=Math.min(1,(t-t0)/750);el.textContent=fmt(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
@@ -240,5 +286,5 @@ function um(u){if(u==S.ses.u){toast('No puede quitarse a sí mismo');return}S.me
 function csv(){const per=S.per,r=[['Vehiculo','Ingresos','Directos','Generales','Utilidad'],...D().vehicles.map(v=>{const c=calc(v.id,per);return[v.plate,c.inc,c.dir,Math.round(c.gen),Math.round(c.profit)]})];
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([r.map(x=>x.join(',')).join('\n')],{type:'text/csv'}));a.download='rentabilidad-'+per+'.csv';a.click()}
 
-go(1);
+go(1);if(location.hash=='#cotizacion')quote();
 </script></body></html>
